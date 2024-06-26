@@ -2,13 +2,13 @@ import os
 from pathlib import Path
 from PIL import Image
 import torch
+import torch.nn as nn
 import numpy as np
-import torchvision.transforms.functional as F
-
 from modules import devices
 
 from .yu45020.utils.prepare_images import ImageSplitter
-from .yu45020.Models import UpConv_7
+from .yu45020.Models import UpConv_7, CARN_V2, network_to_half
+
 
 FILE_PATH = str(Path(__file__).parent.absolute())
 
@@ -47,6 +47,21 @@ def getModel(noise: int, style: str):
     weightsPath = os.path.join(modelDir, style, fileName)
     model.load_pre_train_weights(weightsPath)
     model = model.to(devices.device)
+    return model
+
+
+def getCarnV2Model():
+    model = CARN_V2(color_channels=3, mid_channels=64, conv=nn.Conv2d,
+                            single_conv_size=3, single_conv_group=1,
+                            scale=2, activation=nn.LeakyReLU(0.1),
+                            SEBlock=True, repeat_blocks=3, atrous=(1, 1, 1))
+
+    model = network_to_half(model)
+    modelDir = os.path.join(FILE_PATH, 'yu45020', 'model_check_points', 'CARN_V2')
+    weightsPath = os.path.join(modelDir, 'CARN_model_checkpoint.pt')
+    model.load_state_dict(torch.load(weightsPath, map_location='cpu'))
+    model = model.to(devices.device)
+
     return model
 
 

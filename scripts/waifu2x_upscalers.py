@@ -1,9 +1,6 @@
-from modules import modelloader, devices, errors
-from modules.shared import opts
 from modules.upscaler import Upscaler, UpscalerData
-from modules.upscaler_utils import upscale_with_model
+from waifu2x.main import processImageWithSplitter, getModel, getCarnV2Model
 
-from waifu2x.main import processImageWithSplitter, getModel
 
 class Waifu2xFields():
     def __init__(self, style: str, noise: int):
@@ -75,3 +72,17 @@ class Class6(BaseClass, Upscaler):
 class Class7(BaseClass, Upscaler):
     def __init__(self, dirname):
         super().__init__(dirname, data[7])
+
+
+
+class CarnV2Upscaler(Upscaler):
+    def __init__(self, dirname):
+        self.name = "Waifu2x"
+        self.scalers = [UpscalerData("Waifu2x CarnV2", None, self, 2)]
+        super().__init__()
+
+    def do_upscale(self, img, selected_model):
+        model = getCarnV2Model()
+        return processImageWithSplitter(model, img)
+
+
