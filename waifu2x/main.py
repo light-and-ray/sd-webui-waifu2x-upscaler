@@ -38,16 +38,12 @@ _models_cache = {}
 
 def getModel(noise: int, style: str):
     global _models_cache
-    fileName = f'noise{noise}_scale2.0x_model.json'
+    fileName = os.path.join(style.lower(), f'noise{noise}_scale2.0x_model.json')
 
     if fileName not in _models_cache:
-        if style == 'Photo':
-            style = 'photo'
-        else:
-            style = 'anime'
         model = UpConv_7()
         modelDir = os.path.join(FILE_PATH, 'yu45020', 'model_check_points', 'Upconv_7')
-        weightsPath = os.path.join(modelDir, style, fileName)
+        weightsPath = os.path.join(modelDir, fileName)
         model.load_pre_train_weights(weightsPath)
         model = model.to(devices.device)
         _models_cache[fileName] = model

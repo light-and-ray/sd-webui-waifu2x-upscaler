@@ -24,28 +24,34 @@ class Waifu2xExtras(scripts_postprocessing.ScriptPostprocessing):
                 enable = gr.Checkbox(False, label="Enable")
             noise = gr.Radio(value='Medium', choices=["None", "Low", "Medium", "High"],
                         label="Noise reduction", type="index")
+            scale = gr.Radio(value='4x', choices=["2x", "4x", "8x", "16x"],
+                        label="Scale", type="index")
             style = gr.Radio(value="Anime", choices=["Anime", "Photo"], label="Style")
 
         args = {
             'enable': enable,
             'noise' : noise,
-            'style' : style
+            'scale' : scale,
+            'style' : style,
         }
         return args
 
     def process_firstpass(self, pp: scripts_postprocessing.PostprocessedImage, **args):
-        pp.shared.target_width = pp.image.width * 2
-        pp.shared.target_height = pp.image.height * 2
+        pp.shared.target_width = pp.image.width * 2 ** (args['scale'] + 1)
+        pp.shared.target_height = pp.image.height * 2 ** (args['scale'] + 1)
 
     def process(self, pp: scripts_postprocessing.PostprocessedImage, **args):
         if args['enable'] == False:
             return
 
         model = getModel(args['noise'], args['style'])
-        pp.image = processImageWithSplitter(model, pp.image)
+        for _ in range(args['scale'] + 1):
+            pp.image = processImageWithSplitter(model, pp.image)
 
         info = copy.copy(args)
         del info['enable']
+        info['noise'] = ["None", "Low", "Medium", "High"][info['noise']]
+        info['scale'] = ["2x", "4x", "8x", "16x"][info['scale']]
         pp.info[self.name] = str(info)
 
 
