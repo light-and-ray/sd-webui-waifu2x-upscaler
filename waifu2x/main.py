@@ -4,7 +4,7 @@ from PIL import Image
 import torch
 import torch.nn as nn
 import numpy as np
-from modules import devices
+from modules import devices, shared
 
 from .yu45020.utils.prepare_images import ImageSplitter
 from .yu45020.Models import UpConv_7, CARN_V2, network_to_half
@@ -28,6 +28,7 @@ def processImageWithSplitter(model, img: Image.Image):
     with torch.no_grad():
         out = []
         for i in img_patches:
+            if shared.state.interrupted: return img
             i = i.to(devices.device)
             out.append(model(i))
     img_upscale = img_splitter.merge_img_tensor(out)

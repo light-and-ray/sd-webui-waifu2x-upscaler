@@ -53,6 +53,7 @@ class Waifu2xExtras(scripts_postprocessing.ScriptPostprocessing):
             model = getModel(args['noise'], args['style'])
         for _ in range(args['scale'] + 1):
             pp.image = processImageWithSplitter(model, pp.image)
+            if shared.state.interrupted: break
 
         info = copy.copy(args)
         del info['enable']
