@@ -1,5 +1,5 @@
 import gradio as gr
-from modules import scripts_postprocessing
+from modules import scripts_postprocessing, shared, script_callbacks
 import copy
 from waifu2x.main import getModel, processImageWithSplitter
 
@@ -9,7 +9,7 @@ else:
     InputAccordion = None
 
 
-class ColorCorrectionExtras(scripts_postprocessing.ScriptPostprocessing):
+class Waifu2xExtras(scripts_postprocessing.ScriptPostprocessing):
     name = "Waifu2x Upscale"
     order = 1010
 
@@ -47,4 +47,21 @@ class ColorCorrectionExtras(scripts_postprocessing.ScriptPostprocessing):
         info = copy.copy(args)
         del info['enable']
         pp.info[self.name] = str(info)
+
+
+def on_ui_settings():
+    shared.opts.add_option(
+        "show_waifu2x_accordion",
+        shared.OptionInfo(
+            False,
+            "Show Waifu2x accordion in extras tab",
+            gr.Checkbox,
+            section=('upscaling', "Upscaling")
+        ).needs_reload_ui()
+    )
+
+script_callbacks.on_ui_settings(on_ui_settings)
+
+if not shared.opts.data.get('show_waifu2x_accordion', False):
+    del Waifu2xExtras
 
