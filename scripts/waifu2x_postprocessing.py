@@ -1,7 +1,7 @@
 import gradio as gr
 from modules import scripts_postprocessing, shared, script_callbacks
 import copy
-from waifu2x.main import getModel, processImageWithSplitter
+from waifu2x.main import getModel, processImageWithSplitter, getCarnV2Model
 
 if hasattr(scripts_postprocessing.ScriptPostprocessing, 'process_firstpass'):  # webui >= 1.7
     from modules.ui_components import InputAccordion
@@ -26,7 +26,10 @@ class Waifu2xExtras(scripts_postprocessing.ScriptPostprocessing):
                         label="Noise reduction", type="index")
             scale = gr.Radio(value='4x', choices=["2x", "4x", "8x", "16x"],
                         label="Scale", type="index")
-            style = gr.Radio(value="Anime", choices=["Anime", "Photo"], label="Style")
+            style = gr.Radio(value="Anime", choices=["Anime", "Photo", "CarnV2"], label="Style")
+
+        style.change(fn=lambda x: gr.update(visible=(x!="CarnV2")),
+            inputs=[style], outputs=[noise], show_progress=False)
 
         args = {
             'enable': enable,
@@ -44,7 +47,10 @@ class Waifu2xExtras(scripts_postprocessing.ScriptPostprocessing):
         if args['enable'] == False:
             return
 
-        model = getModel(args['noise'], args['style'])
+        if args['style'] == "CarnV2":
+            model = getCarnV2Model()
+        else:
+            model = getModel(args['noise'], args['style'])
         for _ in range(args['scale'] + 1):
             pp.image = processImageWithSplitter(model, pp.image)
 
@@ -52,6 +58,8 @@ class Waifu2xExtras(scripts_postprocessing.ScriptPostprocessing):
         del info['enable']
         info['noise'] = ["None", "Low", "Medium", "High"][info['noise']]
         info['scale'] = ["2x", "4x", "8x", "16x"][info['scale']]
+        if args['style'] == "CarnV2":
+            del info['noise']
         pp.info[self.name] = str(info)
 
 
