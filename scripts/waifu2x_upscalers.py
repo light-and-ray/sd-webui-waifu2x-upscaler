@@ -22,7 +22,7 @@ class Waifu2xFields():
         elif self.noise == 3:
             noiseStr = 'hight'
 
-        return f'Waifu2x {self.style.lower()} denoise {self.noise}'
+        return f'Waifu2x {self.style.lower()} denoise {noiseStr}'
 
 
 data = [
