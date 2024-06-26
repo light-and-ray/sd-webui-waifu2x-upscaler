@@ -19,7 +19,7 @@ class Waifu2xFields():
         elif self.noise == 3:
             noiseStr = 'hight'
 
-        return f'Waifu2x {self.style.lower()} denoise {noiseStr}'
+        return f'Waifu2x {self.style.lower()} denoise {self.noise} ({noiseStr})'
 
 
 data = [
@@ -78,7 +78,7 @@ class Class7(BaseClass, Upscaler):
 class CarnV2Upscaler(Upscaler):
     def __init__(self, dirname):
         self.name = "Waifu2x"
-        self.scalers = [UpscalerData("Waifu2x CarnV2", None, self, 2)]
+        self.scalers = [UpscalerData("Waifu2x+ model CarnV2", None, self, 2)]
         super().__init__()
 
     def do_upscale(self, img, selected_model):
