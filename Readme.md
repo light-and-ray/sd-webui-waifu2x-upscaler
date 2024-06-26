@@ -5,7 +5,7 @@ Waifu2x is an open-source NN upscaler from 2015. You can install it ether for no
 ![](/images/preview.png)
 ![](/images/upscalers.png)
 
-`Waifu2x+ model CarnV2` is a tuned and modified with extra features model. Has 5 times more parameters 2,149,607 vs 552,480
+`Waifu2x+ model CarnV2` is a tuned and modified model with extra features. Has 4 times more parameters 2,149,607 vs 552,480
 
 <details>
 <summary>Alternative UI</summary>
