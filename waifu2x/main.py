@@ -34,34 +34,45 @@ def processImageWithSplitter(model, img: Image.Image):
     return tensorToPil(img_upscale)
 
 
-def getModel(noise: int, style: str):
-    if style == 'Photo':
-        style = 'photo'
-    else:
-        style = 'anime'
+_models_cache = {}
 
+def getModel(noise: int, style: str):
+    global _models_cache
     fileName = f'noise{noise}_scale2.0x_model.json'
 
-    model = UpConv_7()
-    modelDir = os.path.join(FILE_PATH, 'yu45020', 'model_check_points', 'Upconv_7')
-    weightsPath = os.path.join(modelDir, style, fileName)
-    model.load_pre_train_weights(weightsPath)
-    model = model.to(devices.device)
-    return model
+    if fileName not in _models_cache:
+        if style == 'Photo':
+            style = 'photo'
+        else:
+            style = 'anime'
+        model = UpConv_7()
+        modelDir = os.path.join(FILE_PATH, 'yu45020', 'model_check_points', 'Upconv_7')
+        weightsPath = os.path.join(modelDir, style, fileName)
+        model.load_pre_train_weights(weightsPath)
+        model = model.to(devices.device)
+        _models_cache[fileName] = model
 
+    return _models_cache[fileName]
+
+
+
+_model_carnV2 = None
 
 def getCarnV2Model():
-    model = CARN_V2(color_channels=3, mid_channels=64, conv=nn.Conv2d,
-                            single_conv_size=3, single_conv_group=1,
-                            scale=2, activation=nn.LeakyReLU(0.1),
-                            SEBlock=True, repeat_blocks=3, atrous=(1, 1, 1))
+    global _model_carnV2
+    if _model_carnV2 is None:
+        model = CARN_V2(color_channels=3, mid_channels=64, conv=nn.Conv2d,
+                                single_conv_size=3, single_conv_group=1,
+                                scale=2, activation=nn.LeakyReLU(0.1),
+                                SEBlock=True, repeat_blocks=3, atrous=(1, 1, 1))
 
-    model = network_to_half(model)
-    modelDir = os.path.join(FILE_PATH, 'yu45020', 'model_check_points', 'CARN_V2')
-    weightsPath = os.path.join(modelDir, 'CARN_model_checkpoint.pt')
-    model.load_state_dict(torch.load(weightsPath, map_location='cpu'))
-    model = model.to(devices.device)
+        model = network_to_half(model)
+        modelDir = os.path.join(FILE_PATH, 'yu45020', 'model_check_points', 'CARN_V2')
+        weightsPath = os.path.join(modelDir, 'CARN_model_checkpoint.pt')
+        model.load_state_dict(torch.load(weightsPath, map_location='cpu'))
+        model = model.to(devices.device)
+        _model_carnV2 = model
 
-    return model
+    return _model_carnV2
 
 
