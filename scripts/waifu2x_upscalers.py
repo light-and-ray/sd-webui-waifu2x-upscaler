@@ -7,18 +7,8 @@ class Waifu2xFields():
         self.style = style
         self.noise = noise
 
-
     def getName(self):
-        noiseStr = ''
-        if self.noise == 0:
-            noiseStr = 'none'
-        elif self.noise == 1:
-            noiseStr = 'low'
-        elif self.noise == 2:
-            noiseStr = 'medium'
-        elif self.noise == 3:
-            noiseStr = 'hight'
-
+        noiseStr = ['none', 'low', 'medium', 'hight'][self.noise]
         return f'Waifu2x {self.style.lower()} denoise {self.noise} ({noiseStr})'
 
 
@@ -32,6 +22,7 @@ data = [
     Waifu2xFields('Photo', 2),
     Waifu2xFields('Photo', 3),
 ]
+
 
 class BaseClass(Upscaler):
     def __init__(self, dirname, waifu2xFields: Waifu2xFields = None):

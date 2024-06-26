@@ -34,6 +34,7 @@ def processImageWithSplitter(model, img: Image.Image):
     return tensorToPil(img_upscale)
 
 
+
 _models_cache = {}
 
 def getModel(noise: int, style: str):
