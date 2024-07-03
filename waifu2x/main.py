@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 from modules import devices, shared
+from tqdm import tqdm
 
 from .yu45020.utils.prepare_images import ImageSplitter
 from .yu45020.Models import UpConv_7, CARN_V2, network_to_half
@@ -27,7 +28,7 @@ def processImageWithSplitter(model, img: Image.Image):
     img_patches = img_splitter.split_img_tensor(img, scale_method=None, img_pad=0)
     with torch.no_grad():
         out = []
-        for i in img_patches:
+        for i in tqdm(img_patches):
             if shared.state.interrupted: return img
             i = i.to(devices.device)
             out.append(model(i))
