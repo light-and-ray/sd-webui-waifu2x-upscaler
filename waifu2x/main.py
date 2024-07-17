@@ -32,8 +32,11 @@ def processImageWithSplitter(model, img: Image.Image):
             if shared.state.interrupted: return img
             i = i.to(devices.device)
             out.append(model(i))
+            del i
     img_upscale = img_splitter.merge_img_tensor(out)
-    return tensorToPil(img_upscale)
+    result = tensorToPil(img_upscale)
+    del img_upscale, out
+    return result
 
 
 
