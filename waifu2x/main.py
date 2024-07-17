@@ -16,7 +16,9 @@ FILE_PATH = str(Path(__file__).parent.absolute())
 def tensorToPil(img):
     normalized_out = img.squeeze(0).permute(1, 2, 0) * 255
     numpy_image = np.clip(normalized_out.numpy(), 0, 255).astype(np.uint8)
-    return Image.fromarray(numpy_image)
+    result = Image.fromarray(numpy_image)
+    del normalized_out, numpy_image
+    return result
 
 
 def processImageWithSplitter(model, img: Image.Image):
