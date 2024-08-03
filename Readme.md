@@ -1,6 +1,6 @@
 # Waifu2x upscaler for A1111 sd_webui
 
-Waifu2x is an open-source NN upscaler from 2015. You can install it for nostalgia purpose, or if you need very fast NN upscaler. Similar to "preserve details 2.0" in photoshop. It takes about 1 second to upscale 1024x1024 image 2x on RTX 3060 GPU
+Waifu2x is an open-source NN upscaler from 2015. You can install it for nostalgia purpose, or if you need fast NN upscaler. Similar to "preserve details 2.0" in photoshop. But nevertheless new gen upscalers are a way better and faster, e.g. [4x-Nomos8k-span-otf-medium](https://openmodeldb.info/models/4x-Nomos8k-span-otf-medium) - 10 times faster then Waifu in 4x, and quality is comparable to DAT in many cases
 
 ![](/images/preview.png)
 ![](/images/upscalers.png)
